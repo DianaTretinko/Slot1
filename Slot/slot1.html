@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Слота</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('back.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .slot-machine {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+        }
+
+        .reels {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .reel {
+            width: 100px;
+            height: 100px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .reel img {
+            width: calc(100% + 150px); /* Увеличиваем ширину изображения */
+            height: calc(100% + 115px); /* Увеличиваем высоту изображения */
+            position: absolute;
+            object-fit: cover; /* Масштабирует изображение, обрезая его по бокам */
+            object-position: center bottom; /* Центрует изображение и немного смещает вниз */
+            margin: -100px; /* Обеспечивает обрезку изображения на 20px с каждой стороны */
+            top: 55px; /* Отступ сверху на 10px */
+        }
+
+        @keyframes spin {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+
+        .start-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: #8e1713;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .start-btn:disabled {
+            background: gray;
+            cursor: not-allowed;
+        }
+
+        .start-btn:hover:enabled {
+            background: #801715;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .win-banner {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            display: none;
+        }
+
+        .win-banner img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .restart-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: red;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .restart-btn:hover {
+            background: #801715;
+            color: white;
+        }
+
+        .image-animation {
+            width: calc(100% + 150px); /* Увеличиваем ширину изображения */
+            height: calc(100% + 115px); /* Увеличиваем высоту изображения */
+            position: absolute;
+            object-fit: cover; /* Масштабирует изображение, обрезая его по бокам */
+            object-position: center bottom; /* Центрует изображение и немного смещает вниз */
+            margin: -100px; /* Обеспечивает обрезку изображения на 20px с каждой стороны */
+            top: 55px; /* Отступ сверху на 10px */
+        }
+    </style>
+</head>
+<body>
+    <div class="slot-machine">
+        <div class="reels" id="reels">
+            <!-- 4x4 grid of reels -->
+            <div class="reel"><img src="cat.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="ezik1.jpg" alt="Car"></div>
+            <div class="reel"><img src="dog1.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="ezik1.jpg" alt="Car"></div>
+            <div class="reel"><img src="cat.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="dog1.jpg" alt="Car"></div>
+            <div class="reel"><img src="ezik1.jpg" alt="Car"></div>
+            <div class="reel"><img src="dog1.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="hum1.jpg" alt="Car"></div>
+            <div class="reel"><img src="ezik1.jpg" alt="Car"></div>
+        </div>
+        <button class="start-btn" id="startButton">Старт</button>
+        <div class="message" id="message">Попробуй еще раз</div>
+    </div>
+
+    <div class="win-banner" id="winBanner">
+        <img src="money1.jpg" alt="Money">
+        <div id="winText">Поздравляю, вы выиграли 5000 евро!</div>
+        <button class="restart-btn" id="restartButton">Начать заново</button>
+    </div>
+
+    <script>
+        const reels = document.getElementById('reels');
+const startButton = document.getElementById('startButton');
+const message = document.getElementById('message');
+const winBanner = document.getElementById('winBanner');
+const winText = document.getElementById('winText');
+const restartButton = document.getElementById('restartButton');
+
+const carImages = [
+    'cat.jpg',
+    'hum1.jpg',
+    'ezik1.jpg',
+    'dog1.jpg',
+];
+
+const specialAnimations = {
+    'cat.jpg': [
+        'cat2.jpg',
+        'cat3.jpg',
+        'cat4.jpg',
+        'cat5.jpg',
+        'cat6.jpg',
+        'cat7.jpg',
+        'cat8.jpg',
+        'cat9.jpg',
+        'cat10.jpg',
+        'cat10.jpg',
+        'cat11.jpg',
+        'cat12.jpg',
+        'cat13.jpg',
+        'cat14.jpg',
+        'cat15.jpg',
+        'cat16.jpg',
+    ],
+    'hum1.jpg': [
+        'hum2.jpg',
+        'hum3.jpg',
+        'hum4.jpg',
+        'hum5.jpg',
+        'hum6.jpg',
+        'hum87.jpg',
+        'hum7.jpg',
+        'hum9.jpg',
+        'hum10.jpg',
+        'hum11.jpg',
+        'hum12.jpg',
+        'hum1.jpg',
+        'hum2.jpg',
+        'hum3.jpg',
+        'hum4.jpg',
+        'hum5.jpg',
+        'hum6.jpg',
+        'hum87.jpg',
+        'hum7.jpg',
+        'hum9.jpg',
+        'hum10.jpg',
+        'hum11.jpg',
+        'hum12.jpg',
+        'hum1.jpg',
+    ],
+    'ezik1.jpg': [
+        'ezik2.jpg',
+        'ezik3.jpg',
+        'ezik4.jpg',
+        'ezik5.jpg',
+        'ezik6.jpg',
+        'ezik7.jpg',
+        'ezik8.jpg',
+        'ezik9.jpg',
+        'ezik10.jpg',
+        'ezik11.jpg',
+        'ezik12.jpg',
+        'ezik13.jpg',
+        'ezik14.jpg',
+        'ezik15.jpg',
+        'ezik16.jpg',
+        'ezik1.jpg',
+    ],
+    'dog1.jpg': [
+        'dog2.jpg', // New animation image
+        'dog3.jpg', 
+        'dog4.jpg', // New animation image
+        'dog5.jpg',
+        'dog6.jpg', // New animation image
+        'dog7.jpg',
+        'dog8.jpg', // New animation image
+        'dog9.jpg',
+        'dog10.jpg', // New animation image
+        'dog11.jpg',
+        'dog12.jpg', // New animation image
+        'dog13.jpg', 
+        'dog14.jpg', // New animation image
+        'dog15.jpg'// New animation image
+    ],
+    'snake1.jpg': [
+    'snake2.jpg', // New animation image
+    'snake3.jpg',
+    'snake4.jpg', // New animation image
+    'snake5.jpg',
+    'snake6.jpg', // New animation image
+    'snake7.jpg',
+    'snake8.jpg', // New animation image
+    'snake9.jpg', // New animation image
+    'snake10.jpg', // New animation image
+    'snake11.jpg',
+    'snake12.jpg', // New animation image
+    'snake13.jpg',
+    'snake14.jpg', // New animation image
+    'snake15.jpg',
+    'snake16.jpg'
+]
+};
+
+let spinCount = 0;
+
+function checkWin() {
+    const rows = 4;
+    const cols = 4;
+    const reelsArray = Array.from(reels.querySelectorAll('.reel img'));
+    const grid = [];
+
+    for (let i = 0; i < rows; i++) {
+        grid.push(reelsArray.slice(i * cols, i * cols + cols).map(img => img.src));
+    }
+
+    const isWin = (line) => line.every((val) => val === line[0]);
+
+    for (let i = 0; i < rows; i++) {
+        if (isWin(grid[i])) {
+            displayWin('Поздравляю, вы выиграли 6000 евро!');
+            return;
+        }
+    }
+
+    for (let j = 0; j < cols; j++) {
+        const col = grid.map(row => row[j]);
+        if (isWin(col)) {
+            displayWin('Поздравляю, вы выиграли 3000 евро!');
+            return;
+        }
+    }
+
+    if (isWin([grid[0][0], grid[1][1], grid[2][2], grid[3][3]]) ||
+        isWin([grid[0][3], grid[1][2], grid[2][1], grid[3][0]])) {
+        displayWin('Поздравляю, вы выиграли 5000 евро!');
+        return;
+    }
+}
+
+function displayWin(text) {
+    winText.textContent = text;
+    winBanner.style.display = 'flex';
+}
+
+function spinReels() {
+    spinCount++;
+    startButton.disabled = true;
+    message.textContent = '';
+    winBanner.style.display = 'none';
+
+    // Условие, чтобы snake1.jpg выпадала случайно
+    const isSnakeRound = Math.random() < 0.1; // Пример: вероятность 10%
+
+    let animationsComplete = 0;
+    const reelsArray = Array.from(reels.querySelectorAll('.reel img'));
+
+    reelsArray.forEach((img, i) => {
+        img.style.animation = 'spin 0.5s infinite linear';
+
+        setTimeout(() => {
+            img.style.animation = 'none';
+            const selectedImage = isSnakeRound
+                ? 'snake1.jpg'
+                : carImages[Math.floor(Math.random() * carImages.length)];
+
+            if (specialAnimations[selectedImage]) {
+                img.classList.add('image-animation');
+                const animationFrames = specialAnimations[selectedImage];
+                let frameIndex = 0;
+
+                const interval = setInterval(() => {
+                    img.src = animationFrames[frameIndex];
+                    frameIndex++;
+
+                    if (frameIndex >= animationFrames.length) {
+                        clearInterval(interval);
+                        img.classList.remove('image-animation');
+                        img.src = selectedImage; // Сброс к исходному изображению после анимации
+                        animationsComplete++;
+
+                        if (animationsComplete === reelsArray.length) {
+                            startButton.disabled = false;
+
+                            if (isSnakeRound) {
+                                window.location.href = 'index.html'; // Переход на snake.html
+                            } else {
+                                checkWin();
+                            }
+                        }
+                    }
+                }, 50);
+            } else {
+                img.src = selectedImage;
+                animationsComplete++;
+
+                if (animationsComplete === reelsArray.length) {
+                    startButton.disabled = false;
+
+                    if (isSnakeRound) {
+                        window.location.href = 'index.html'; // Переход на snake.html
+                    } else {
+                        checkWin();
+                    }
+                }
+            }
+        }, 2000 + i * 200);
+    });
+}
+
+
+startButton.addEventListener('click', spinReels);
+
+restartButton.addEventListener('click', () => {
+    winBanner.style.display = 'none';
+});
+
+    </script>
+</body>
+</html>
+
+

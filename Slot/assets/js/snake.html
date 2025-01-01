@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Snake Game</title>
+		<style type="text/css">
+			#playArea {
+				width: 500px;
+				height: 500px;
+				border: 2px solid black;
+				margin: auto;
+				position: relative;
+				background-color: #ad0000;
+			}
+			#snake {
+				width: 10px;
+				height: 10px;
+				position: absolute;
+				background-color: #000;
+				z-index: 5;
+			}
+			#food {
+				width: 10px;
+				height: 10px;
+				position: absolute;
+				background-color: #f00;
+				z-index: 5;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="playArea"></div>
+		<script>
+			// Create the canvas
+			var canvas = document.getElementById("playArea");
+			var ctx = canvas.getContext("2d");
+
+			// Create the snake
+			var snakeX = 10;
+			var snakeY = 10;
+			var snakeW = 10;
+			var snakeH = 10;
+
+			// Create the food
+			var foodX;
+			var foodY;
+			var foodW = 10;
+			var foodH = 10;
+
+			// Create the score
+			var score = 0;
+
+			// Create the directions
+			var leftDirection = false;
+			var rightDirection = true;
+			var upDirection = false;
+			var downDirection = false;
+
+			// Generate random food location
+			function generateFood() {
+				foodX = Math.floor(Math.random()*49)*10;
+				foodY = Math.floor(Math.random()*49)*10;
+			}
+			generateFood();
+
+			// Create the snake
+			function createSnake() {
+				ctx.fillStyle = "#000";
+				ctx.fillRect(snakeX, snakeY, snakeW, snakeH);
+			}
+
+			// Create the food
+			function createFood() {
+				ctx.fillStyle = "#f00";
+				ctx.fillRect(foodX, foodY, foodW, foodH);
+			}
+
+			// Move the snake
+			function moveSnake() {
+				if (leftDirection) {
+					snakeX -= 10;
+				}
+				if (rightDirection) {
+					snakeX += 10;
+				}
+				if (upDirection) {
+					snakeY -= 10;
+				}
+				if (downDirection) {
+					snakeY += 10;
+				}
+			}
+
+			// Check if the snake has eaten the food
+			function checkFoodCollision() {
+				if (snakeX == foodX && snakeY == foodY) {
+					score++;
+					generateFood();
+				}
+			}
+
+			// Check for game over
+			function checkGameOver() {
+				if (snakeX < 0 || snakeX > 490 || snakeY < 0 || snakeY > 490) {
+					clearInterval(game);
+					alert("Game Over! Your score is " + score);
+				}
+			}
+
+			// Change the direction of the snake
+			document.onkeydown = function(e) {
+				if (e.keyCode == 37 && !rightDirection) {
+					leftDirection = true;
+					upDirection = false;
+					downDirection = false;
+				} else if (e.keyCode == 38 && !downDirection) {
+					upDirection = true;
+					leftDirection = false;
+					rightDirection = false;
+				} else if (e.keyCode == 39 && !leftDirection) {
+					rightDirection = true;
+					upDirection = false;
+					downDirection = false;
+				} else if (e.keyCode == 40 && !upDirection) {
+					downDirection = true;
+					leftDirection = false;
+					rightDirection = false;
+				}
+			}
+
+			// Create the game loop
+			var game = setInterval(function() {
+				ctx.clearRect(0,0,500,500);
+				createSnake();
+				createFood();
+				checkFoodCollision();
+				checkGameOver();
+				moveSnake();
+			},100);
+		</script>
+	</body>
+</html>
