@@ -13,21 +13,22 @@ Window.Game = {};
     canvas.height = canvas.width = CANVAS_SIZE * CELL_SIZE;
 
     const colorPalettes = [
-        ['#fde725', '#5ec962', '#21918c', '#3b528b', '#440154'], // Viridis
-        ['#fcfdbf', '#fde725', '#35b779', '#31688e', '#440154'], // Magma
-        ['#ff0000', '#ff7f0e', '#2ca02c', '#1f77b4', '#d62728'], // Custom sequential
+        ['#ff0000', '#ff6347', '#ff4500', '#ffd700', '#daa520'], 
+        ['#ffd700', '#ffea00', '#ffa500', '#ff4500', '#ff0000'], 
+        ['#800080', '#8a2be2', '#9370db', '#ba55d3', '#9400d3'], 
     ];
 
     let currentPaletteIndex = 0;
 
-    let enemySnake = null; // Variable to hold the second snake
+    let enemySnake = null; 
 
-    // Initial apple position
     let apple = {
         x: Math.floor(Math.random() * canvas.width / CELL_SIZE) * CELL_SIZE,
         y: Math.floor(Math.random() * canvas.height / CELL_SIZE) * CELL_SIZE,
         color: "#FFFF00",
     };
+
+    let goldenApple = null; 
 
     function loop() {
         requestAnimationFrame(loop);
@@ -52,6 +53,7 @@ Window.Game = {};
 
         checkEdgeCollision();
         drawApple();
+        drawGoldenApple();
         moveSnake();
     }
 
@@ -80,6 +82,7 @@ Window.Game = {};
         resetScore();
         resetSnake();
         randomizeApple();
+        goldenApple = null;
         enemySnake = null;
     }
 
@@ -115,11 +118,28 @@ Window.Game = {};
         }
 
         randomizeApple();
+        maybeSpawnGoldenApple();
+    }
+
+    function eatGoldenApple() {
+        score += 5;
+        updateScore();
+        goldenApple = null; 
     }
 
     function randomizeApple() {
         apple.x = Math.floor(Math.random() * canvas.width / CELL_SIZE) * CELL_SIZE;
         apple.y = Math.floor(Math.random() * canvas.height / CELL_SIZE) * CELL_SIZE;
+    }
+
+    function maybeSpawnGoldenApple() {
+        if (!goldenApple && Math.random() < 0.1) { 
+            goldenApple = {
+                x: Math.floor(Math.random() * canvas.width / CELL_SIZE) * CELL_SIZE,
+                y: Math.floor(Math.random() * canvas.height / CELL_SIZE) * CELL_SIZE,
+                color: "#FFD700", 
+            };
+        }
     }
 
     function moveSnake() {
@@ -137,6 +157,10 @@ Window.Game = {};
                 eatApple();
             }
 
+            if (goldenApple && cell.x === goldenApple.x && cell.y === goldenApple.y) {
+                eatGoldenApple();
+            }
+
             for (let i = index + 1; i < snake.cells.length; i++) {
                 if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y && !pauze) {
                     GameOver();
@@ -146,13 +170,12 @@ Window.Game = {};
     }
 
     function moveEnemySnake() {
-        // Randomly change direction occasionally
         if (Math.random() < 0.1) {
             const directions = [
-                { dx: CELL_SIZE, dy: 0 }, // right
-                { dx: -CELL_SIZE, dy: 0 }, // left
-                { dx: 0, dy: CELL_SIZE }, // down
-                { dx: 0, dy: -CELL_SIZE }, // up
+                { dx: CELL_SIZE, dy: 0 }, 
+                { dx: -CELL_SIZE, dy: 0 }, 
+                { dx: 0, dy: CELL_SIZE }, 
+                { dx: 0, dy: -CELL_SIZE }, 
             ];
             const newDirection = directions[Math.floor(Math.random() * directions.length)];
             enemySnake.dx = newDirection.dx;
@@ -217,6 +240,13 @@ Window.Game = {};
         context.fillRect(apple.x, apple.y, CELL_SIZE - 1, CELL_SIZE - 1);
     }
 
+    function drawGoldenApple() {
+        if (goldenApple) {
+            context.fillStyle = goldenApple.color;
+            context.fillRect(goldenApple.x, goldenApple.y, CELL_SIZE - 1, CELL_SIZE - 1);
+        }
+    }
+
     document.addEventListener('keydown', function (keyBoardEvent) {
         if (!acceptInput) {
             return;
@@ -243,3 +273,4 @@ Window.Game = {};
 
     requestAnimationFrame(loop);
 })(Window.Game);
+
