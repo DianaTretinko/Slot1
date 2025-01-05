@@ -46,13 +46,13 @@
         }
 
         .reel img {
-            width: calc(100% + 150px); /* Увеличиваем ширину изображения */
-            height: calc(100% + 115px); /* Увеличиваем высоту изображения */
+            width: calc(100% + 150px);
+            height: calc(100% + 115px); 
             position: absolute;
-            object-fit: cover; /* Масштабирует изображение, обрезая его по бокам */
-            object-position: center bottom; /* Центрует изображение и немного смещает вниз */
-            margin: -100px; /* Обеспечивает обрезку изображения на 20px с каждой стороны */
-            top: 55px; /* Отступ сверху на 10px */
+            object-fit: cover; 
+            object-position: center bottom; 
+            margin: -100px; 
+            top: 55px; 
         }
 
         @keyframes spin {
@@ -126,13 +126,13 @@
         }
 
         .image-animation {
-            width: calc(100% + 150px); /* Увеличиваем ширину изображения */
-            height: calc(100% + 115px); /* Увеличиваем высоту изображения */
+            width: calc(100% + 150px); 
+            height: calc(100% + 115px); 
             position: absolute;
-            object-fit: cover; /* Масштабирует изображение, обрезая его по бокам */
-            object-position: center bottom; /* Центрует изображение и немного смещает вниз */
-            margin: -100px; /* Обеспечивает обрезку изображения на 20px с каждой стороны */
-            top: 55px; /* Отступ сверху на 10px */
+            object-fit: cover;
+            object-position: center bottom; 
+            margin: -100px; 
+            top: 55px; 
         }
     </style>
 </head>
@@ -162,7 +162,7 @@
     </div>
 
     <div class="win-banner" id="winBanner">
-        <img src="money1.jpg" alt="Money">
+        <img src="money.jpg" alt="Money">
         <div id="winText">Поздравляю, вы выиграли 5000 евро!</div>
         <button class="restart-btn" id="restartButton">Начать заново</button>
     </div>
@@ -246,35 +246,35 @@ const specialAnimations = {
         'ezik1.jpg',
     ],
     'dog1.jpg': [
-        'dog2.jpg', // New animation image
+        'dog2.jpg',
         'dog3.jpg', 
-        'dog4.jpg', // New animation image
+        'dog4.jpg',
         'dog5.jpg',
-        'dog6.jpg', // New animation image
+        'dog6.jpg',
         'dog7.jpg',
-        'dog8.jpg', // New animation image
+        'dog8.jpg',
         'dog9.jpg',
-        'dog10.jpg', // New animation image
+        'dog10.jpg',
         'dog11.jpg',
-        'dog12.jpg', // New animation image
+        'dog12.jpg',
         'dog13.jpg', 
-        'dog14.jpg', // New animation image
-        'dog15.jpg'// New animation image
+        'dog14.jpg',
+        'dog15.jpg'
     ],
     'snake1.jpg': [
-    'snake2.jpg', // New animation image
+    'snake2.jpg',
     'snake3.jpg',
-    'snake4.jpg', // New animation image
+    'snake4.jpg',
     'snake5.jpg',
-    'snake6.jpg', // New animation image
+    'snake6.jpg',
     'snake7.jpg',
-    'snake8.jpg', // New animation image
-    'snake9.jpg', // New animation image
-    'snake10.jpg', // New animation image
+    'snake8.jpg',
+    'snake9.jpg',
+    'snake10.jpg',
     'snake11.jpg',
-    'snake12.jpg', // New animation image
+    'snake12.jpg',
     'snake13.jpg',
-    'snake14.jpg', // New animation image
+    'snake14.jpg',
     'snake15.jpg',
     'snake16.jpg'
 ]
@@ -327,8 +327,7 @@ function spinReels() {
     message.textContent = '';
     winBanner.style.display = 'none';
 
-    // Условие, чтобы snake1.jpg выпадала случайно
-    const isSnakeRound = Math.random() < 0.1; // Пример: вероятность 10%
+    const isSnakeRound = Math.random() < 0.05; 
 
     let animationsComplete = 0;
     const reelsArray = Array.from(reels.querySelectorAll('.reel img'));
@@ -354,14 +353,14 @@ function spinReels() {
                     if (frameIndex >= animationFrames.length) {
                         clearInterval(interval);
                         img.classList.remove('image-animation');
-                        img.src = selectedImage; // Сброс к исходному изображению после анимации
+                        img.src = selectedImage; 
                         animationsComplete++;
 
                         if (animationsComplete === reelsArray.length) {
                             startButton.disabled = false;
 
                             if (isSnakeRound) {
-                                window.location.href = 'index.html'; // Переход на snake.html
+                                window.location.href = 'index.html'; 
                             } else {
                                 checkWin();
                             }
@@ -376,7 +375,7 @@ function spinReels() {
                     startButton.disabled = false;
 
                     if (isSnakeRound) {
-                        window.location.href = 'index.html'; // Переход на snake.html
+                        window.location.href = 'index.html'; 
                     } else {
                         checkWin();
                     }
@@ -396,5 +395,6 @@ restartButton.addEventListener('click', () => {
     </script>
 </body>
 </html>
+
 
 
