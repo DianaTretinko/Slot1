@@ -103,7 +103,7 @@ Window.Game = {};
 
     function eatApple() {
         snake.length++;
-        frameCounterLimit = Math.max(10, Math.floor(frameCounterLimit / 1.5));
+        frameCounterLimit = Math.max(10, Math.floor(frameCounterLimit / 1.25));
 
         currentPaletteIndex = (currentPaletteIndex + 1) % colorPalettes.length;
         snake.color = colorPalettes[currentPaletteIndex][
